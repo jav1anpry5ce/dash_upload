@@ -65,7 +65,7 @@ services:
         depends_on:
         - file_server_database
     dash_upload:
-        image: jav1anpry5ce/dash_upload:1.3.0
+        image: frontend build img
         container_name: dash_upload
         ports:
         - 80:80
