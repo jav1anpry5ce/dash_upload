@@ -40,14 +40,12 @@ export default function Page({ params }: { params: { folder: string[] } }) {
   if (error) notFound();
 
   return (
-    <div>
-      <div className="flex flex-wrap items-start justify-center gap-4 lg:justify-start">
-        <AnimatePresence>
-          {folders.map((file: string) => (
-            <ClickableIcon key={file} file={file} />
-          ))}
-        </AnimatePresence>
-      </div>
+    <div className="flex flex-wrap items-start justify-center gap-4 lg:justify-start">
+      <AnimatePresence>
+        {folders.map((file: string) => (
+          <ClickableIcon key={file} file={file} />
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

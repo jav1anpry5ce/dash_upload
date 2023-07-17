@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useContext } from "react";
 import { AppContext } from "@/context/AppContext";
+import Link from "next/link";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -14,11 +15,11 @@ export default function Header() {
   const variants = {
     close: {
       opacity: 0,
-      // display: "none",
+      display: "none",
     },
     open: {
       opacity: 1,
-      // display: "block",
+      display: "block",
       transition: {
         duration: 0.5,
       },
@@ -43,14 +44,16 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-[70] backdrop-blur-md">
       <div className="relative flex items-center justify-between p-2 lg:px-10 lg:py-4">
-        <div className="inline-flex items-center gap-2">
-          <FaNeos fontSize={24} />
-          <p className="font-mono text-xl font-bold">Dash Upload</p>
-        </div>
+        <Link href="/">
+          <div className="inline-flex items-center gap-2">
+            <FaNeos fontSize={24} />
+            <p className="font-mono text-xl font-bold">Dash Upload</p>
+          </div>
+        </Link>
         <div>
           <Image
             src={
-              session
+              session?.user.image
                 ? session?.user?.image
                 : "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"
             }
@@ -71,7 +74,7 @@ export default function Header() {
             <li className="flex items-center gap-4 p-2 px-4">
               <Image
                 src={
-                  session
+                  session.user.image
                     ? session?.user?.image
                     : "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"
                 }

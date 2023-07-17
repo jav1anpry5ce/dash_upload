@@ -9,15 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/eslint-plugin-next": "^13.4.7",
+    "@next/eslint-plugin-next": "^13.4.10",
     "@types/node": "20.3.1",
     "@types/react": "18.2.13",
     "@types/react-dom": "18.2.6",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
-    "eslint-config-next": "^12.0.4",
-    "framer-motion": "^10.12.17",
-    "next": "^13.4.7",
+    "eslint-config-next": "^12.3.4",
+    "framer-motion": "^10.12.21",
+    "next": "^13.4.10",
     "next-auth": "^4.22.1",
     "nodemailer": "^6.9.3",
     "postcss": "8.4.24",
@@ -25,12 +25,13 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.10.1",
     "react-toastify": "^9.1.3",
+    "sharp": "^0.32.3",
     "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss": "3.3.2",
     "typescript": "5.1.3"
   },
   "devDependencies": {
-    "daisyui": "^3.1.7",
+    "daisyui": "^3.2.1",
     "eslint": "^7.32.0",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0"

@@ -37,8 +37,7 @@ export default function CreateModal({ open, updateOpen }: Props) {
     if (!session?.user?.email) return;
     if (!session?.token) return;
     const folderName = e.target.name.value;
-    const newFolder =
-      pathname.replace("dashboard", session?.user.email) + "/" + folderName;
+    const newFolder = pathname.replace("dashboard", "") + "/" + folderName;
     const data = {
       folder: newFolder,
     };
@@ -48,7 +47,7 @@ export default function CreateModal({ open, updateOpen }: Props) {
           Authorization: session?.token,
         },
       })
-      .then((res) => {
+      .then(() => {
         e.target.reset();
         updateOpen();
         revalidateData();
@@ -60,7 +59,7 @@ export default function CreateModal({ open, updateOpen }: Props) {
       variants={variants}
       initial="closed"
       animate={open ? "open" : "closed"}
-      className="absolute inset-0 left-[50%] top-[50%] flex h-screen w-screen translate-x-[-50%] translate-y-[-50%] items-center justify-center bg-black/20 backdrop-blur"
+      className="fixed inset-0 flex items-center justify-center overflow-hidden bg-black/20 backdrop-blur"
       onClick={() => updateOpen()}
     >
       <form

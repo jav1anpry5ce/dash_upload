@@ -83,7 +83,6 @@ const checkToken = (token) => {
     con.query(sql, (err, result) => {
       if (err) return reject(false);
       if (result.length > 0) return resolve(result[0]);
-      return reject();
     });
   });
 };
@@ -104,7 +103,7 @@ const getSharedLink = (token) => {
     con.query(sql, (err, result) => {
       if (err) return reject(err);
       if (result.length > 0) return resolve(result[0]);
-      return reject();
+      return reject(null);
     });
   });
 };

@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthContext>
           <AppProvider>
-            <div className="m-0 flex min-h-screen flex-col bg-gradient-to-tr from-slate-950 to-teal-950 p-0 text-white">
+            <div className="flex min-h-screen flex-col bg-gradient-to-tr from-slate-950 to-teal-950 text-white">
               <Header />
               <main className="flex flex-1 flex-col">{children}</main>
             </div>

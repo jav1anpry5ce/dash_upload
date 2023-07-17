@@ -57,22 +57,13 @@ router.post("/create-folder", (req, res) => {
   const { folder } = req.body;
   sql
     .checkToken(req.headers.authorization)
-    .then(() => {
-      const newFolder = path.join(dir, folder).replaceAll("%20", " ");
-      const userFolder = fs.existsSync(path.join(dir, newFolder));
-      if (!userFolder) {
-        try {
-          fs.mkdirSync(path.join(newFolder));
-          res.status(200).send({ message: "Created!" });
-        } catch (err) {
-          res.status(500).send({ message: "Something went wrong!" });
-          console.error(err);
-          return;
-        }
-      }
+    .then((auth) => {
+      const newFolder = path
+        .join(dir, auth.user, folder)
+        .replaceAll("%20", " ");
       try {
         fs.mkdirSync(newFolder);
-        res.status(200).send("Created");
+        res.status(200).send({ message: "Created!" });
       } catch (err) {
         res.status(500).send({ message: "Something went wrong!" });
         console.error(err);
@@ -89,15 +80,17 @@ router.get("/folders", (req, res) => {
     .checkToken(req.headers.authorization)
     .then((result) => {
       const pth = path.join(dir, result.user).replaceAll("%20", " ");
-      getFiles(pth)
-        .then((files) => {
+      const isFolder = fs.existsSync(pth);
+      if (isFolder) {
+        getFiles(pth).then((files) => {
           return res.status(200).send(files);
-        })
-        .catch(async () => {
-          fs.mkdirSync(pth);
-          const files = await getFiles(pth);
-          res.status(200).send(files);
         });
+      } else {
+        fs.mkdirSync(pth);
+        getFiles(pth).then((files) => {
+          return res.status(200).send(files);
+        });
+      }
     })
     .catch(() => {
       res.status(401).send();
@@ -119,7 +112,25 @@ router.get("/folder-size", (req, res) => {
 
 router.get("/download-file", (req, res) => {
   const { uri } = req.query;
-  res.sendFile(path.join(dir, uri));
+  const basePath = uri.split("/")[1];
+  const remaining_path = uri.split("/").slice(2).join("/");
+  sql
+    .getSharedLink(basePath)
+    .then((data) => {
+      if (!data) return res.sendFile(path.join(dir, uri));
+      res.set(
+        "Content-Disposition",
+        `attachment; filename="${basePath.at(-1)}"`
+      );
+      return res.sendFile(path.join(dir, data.folder, remaining_path));
+    })
+    .catch(() => {
+      res.set(
+        "Content-Disposition",
+        `attachment; filename="${uri.split("/").at(-1)}"`
+      );
+      return res.sendFile(path.join(dir, uri));
+    });
 });
 
 router.get("/download-folder", async (req, res) => {
@@ -153,17 +164,13 @@ router.get("/share", (req, res) => {
     .then((data) => {
       const pth = path.join(dir, data.folder, uri).replaceAll("%20", " ");
       const file_folder = pth.split("\\").at(-1);
-      if (file_folder.split(".")[1]) {
-        return res.status(200).send([file_folder]);
-      }
-      getFiles(pth)
-        .then((files) => {
+      if (fs.lstatSync(pth).isDirectory()) {
+        getFiles(pth).then((files) => {
           return res.status(200).send(files);
-        })
-        .catch((err) => {
-          console.error(err);
-          return res.status(500).send();
         });
+      } else {
+        return res.status(200).send([file_folder.split("/").at(-1)]);
+      }
     })
     .catch(() => {
       res.status(404).send();
@@ -173,8 +180,8 @@ router.get("/share", (req, res) => {
 router.get("/*:path", (req, res) => {
   sql
     .checkToken(req.headers.authorization)
-    .then((result) => {
-      const pth = path.join(dir, result.user, req.path).replaceAll("%20", " ");
+    .then((auth) => {
+      const pth = path.join(dir, auth.user, req.path).replaceAll("%20", " ");
       fs.readdir(pth, (err, files) => {
         if (err) {
           res.status(500).send({ message: "Something went wrong!" });
@@ -184,7 +191,7 @@ router.get("/*:path", (req, res) => {
       });
     })
     .catch(() => {
-      res.status(400).send();
+      res.status(401).send();
     });
 });
 
@@ -276,7 +283,7 @@ router.post("/share-folder", (req, res) => {
       sql
         .createSharedLink(token, folder)
         .then(() => {
-          res.status(200).send();
+          res.status(200).send({ share_token: token });
         })
         .catch(() => {
           res.status(500).send();

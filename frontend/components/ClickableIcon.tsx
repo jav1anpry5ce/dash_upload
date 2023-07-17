@@ -62,7 +62,6 @@ export default function ClickableIcon({ file }: { file: string }) {
   }, [isRenaming]);
 
   const renderIcon = () => {
-    if (!session?.user?.email) return;
     if (!end)
       return (
         <div className="flex h-[60px] w-[60px] items-center justify-center overflow-hidden">

@@ -11,7 +11,7 @@ export default function FolderOption({
   const pathname = usePathname();
   const links = pathname.split("/").filter((e) => e);
   return (
-    <div className="sticky top-[51px] z-40 bg-transparent outline-none backdrop-blur-lg lg:top-[67px]">
+    <div className="sticky top-[51px] z-40 overflow-hidden bg-transparent outline-none backdrop-blur-lg lg:top-[67px]">
       <BreadCrumbs links={links} />
       <div className="flex items-center justify-start gap-4 p-2 lg:px-10">
         <UploadFiles />

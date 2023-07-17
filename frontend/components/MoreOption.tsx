@@ -5,8 +5,9 @@ import { BiRename } from "react-icons/bi";
 import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { MutableRefObject, useContext } from "react";
+import { useContext } from "react";
 import { AppContext } from "@/context/AppContext";
+import { toast } from "react-toastify";
 
 type MousePosition = {
   x: number;
@@ -80,6 +81,28 @@ export default function MoreOption({
     element.click();
   };
 
+  function unsecuredCopyToClipboard(text: string) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand("copy");
+    } catch (err) {
+      console.error("Unable to copy to clipboard", err);
+    }
+    document.body.removeChild(textArea);
+  }
+
+  const copyToClipboard = (content: string) => {
+    if (window.isSecureContext && navigator.clipboard) {
+      navigator.clipboard.writeText(content);
+    } else {
+      unsecuredCopyToClipboard(content);
+    }
+  };
+
   const shareFile = async () => {
     const filePath =
       pathname.replace("dashboard", `${session?.user?.email}`) + "/" + file;
@@ -94,6 +117,14 @@ export default function MoreOption({
         },
       }
     );
+    const link = `${process.env.NEXT_PUBLIC_URL}/${res.data.share_token}`;
+    copyToClipboard(link);
+    toast.success("Link copied to clipboard", {
+      position: "bottom-right",
+      autoClose: 3000,
+      theme: "dark",
+    });
+    updateOpen();
   };
 
   return (
@@ -128,15 +159,14 @@ export default function MoreOption({
             <BsCloudDownloadFill fontSize={20} />
             <p>Download</p>
           </button>
-          {/* <button
+          <button
             onClick={() => shareFile()}
             className="inline-flex w-full items-center gap-2 p-2 transition duration-200 hover:bg-gray-500/20 hover:text-black"
           >
             <BsShare fontSize={20} />
             <p>Share</p>
-          </button> */}
+          </button>
           <button
-            // onClick={() => shareFile()}
             onClick={() => {
               updateIsRenaming();
               updateOpen();
